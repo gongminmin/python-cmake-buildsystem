@@ -23,7 +23,7 @@ if(APPLE)
   message(STATUS "${_msg} - ${MACOSX_DEPLOYMENT_TARGET}")
 endif()
 
-project(Python C ASM)
+project(Python C)
 
 if(POLICY CMP0042)
     cmake_policy(SET CMP0042 OLD)
