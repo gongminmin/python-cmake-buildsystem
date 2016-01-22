@@ -594,7 +594,7 @@ add_python_extension(_curses_panel
     LIBRARIES ${curses_common_LIBRARIES} ${PANEL_LIBRARIES}
 )
 add_python_extension(_curses
-    REQUIRES ${curses_common_REQUIRES}
+    REQUIRES ${curses_common_REQUIRES} HAVE_CURSES_H
     SOURCES _cursesmodule.c
     LIBRARIES ${curses_common_LIBRARIES}
 )
