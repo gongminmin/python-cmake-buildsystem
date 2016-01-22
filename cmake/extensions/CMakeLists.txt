@@ -206,6 +206,7 @@ if(UNIX)
         )
     endif()
     add_python_extension(_multiprocessing
+        REQUIRES HAVE_SEM_OPEN "NOT POSIX_SEMAPHORES_NOT_ENABLED"
         SOURCES _multiprocessing/multiprocessing.c
                 ${_multiprocessing${PY_VERSION_MAJOR}_SOURCES}
         REQUIRES WITH_THREAD
