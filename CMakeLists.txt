@@ -136,7 +136,7 @@ option(WITH_DOC_STRINGS "Enable if you want documentation strings in extension m
 set(Py_DEBUG OFF) # TODO - Build debugging interpreter
 option(WITH_PYMALLOC "Define if you want to compile in Python-specific mallocs" ON)
 option(WITH_THREAD "Compile in rudimentary thread support" ON)
-if(UNIX)
+if(UNIX OR ANDROID OR IOS)
     option(WITH_STATIC_DEPENDENCIES "Restrict extensions and external dependencies to static libraries" OFF)
     if(WITH_STATIC_DEPENDENCIES)
         if(NOT POLICY CMP0065)

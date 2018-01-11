@@ -156,7 +156,7 @@ message(STATUS "${_msg} - ${ABIFLAGS}")
 
 set(_msg "Checking SOABI")
 try_run(PLATFORM_RUN PLATFORM_COMPILE
-        ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}/cmake/platform.c
+        ${CMAKE_BINARY_DIR} ${PROJECT_SOURCE_DIR}/cmake/platform.c
         RUN_OUTPUT_VARIABLE PLATFORM_TRIPLET)
 if(NOT PLATFORM_COMPILE)
   message(FATAL_ERROR "We could not determine the platform. Please clean the ${CMAKE_PROJECT_NAME} environment and try again...")
@@ -356,7 +356,7 @@ find_library(HAVE_LIBTERMCAP termcap)
 set(LIBUTIL_LIBRARIES )
 set(LIBUTIL_EXPECTED 1)
 
-if(CMAKE_SYSTEM MATCHES "VxWorks\\-7$")
+if((CMAKE_SYSTEM MATCHES "VxWorks\\-7$") OR (CMAKE_SYSTEM MATCHES "Android"))
   set(LIBUTIL_EXPECTED 0)
   set(HAVE_LIBUTIL 0)
 endif()

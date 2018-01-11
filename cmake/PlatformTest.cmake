@@ -28,7 +28,7 @@ macro(python_platform_test var description srcfile invert)
     endif()
 
     try_compile(${var}_COMPILED
-      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}
       ${srcfile}
       COMPILE_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS}
       CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FUNCTION_DEFINITIONS}
@@ -87,7 +87,7 @@ macro(python_platform_test_run var description srcfile invert)
     endif()
 
     try_run(${var} ${var}_COMPILED
-      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_BINARY_DIR}
       ${srcfile}
       COMPILE_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS}
       CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FUNCTION_DEFINITIONS}
