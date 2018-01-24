@@ -394,66 +394,70 @@ if(WIN32 AND IS_PY3)
     endif()
 endif()
 
-set(LIBPYTHON_FROZEN_SOURCES )
-if(IS_PY3)
-
-# Build _freeze_importlib executable
-add_executable(_freeze_importlib
-  ${SRC_DIR}/Programs/_freeze_importlib.c
-  ${LIBPYTHON_OMIT_FROZEN_SOURCES}
-  )
-target_link_libraries(_freeze_importlib ${LIBPYTHON_TARGET_LIBRARIES})
-if(builtin_compile_definitions_without_py_limited_api)
-  target_compile_definitions(_freeze_importlib PUBLIC ${builtin_compile_definitions_without_py_limited_api})
-endif()
-
-# Freeze modules
-set(LIBPYTHON_FROZEN_SOURCES
-  ${SRC_DIR}/Python/importlib_external.h
-  ${SRC_DIR}/Python/importlib.h
-)
-add_custom_command(
-  OUTPUT ${LIBPYTHON_FROZEN_SOURCES}
-  COMMAND
-    ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:_freeze_importlib>
-      ${SRC_DIR}/Lib/importlib/_bootstrap_external.py
+if(BUILD_FREEZE_IMPORTLIB)
+    set(LIBPYTHON_FROZEN_SOURCES )
+    if(IS_PY3)
+    
+    # Build _freeze_importlib executable
+    add_executable(_freeze_importlib
+      ${SRC_DIR}/Programs/_freeze_importlib.c
+      ${LIBPYTHON_OMIT_FROZEN_SOURCES}
+      )
+    target_link_libraries(_freeze_importlib ${LIBPYTHON_TARGET_LIBRARIES})
+    if(builtin_compile_definitions_without_py_limited_api)
+      target_compile_definitions(_freeze_importlib PUBLIC ${builtin_compile_definitions_without_py_limited_api})
+    endif()
+    
+    # Freeze modules
+    set(LIBPYTHON_FROZEN_SOURCES
       ${SRC_DIR}/Python/importlib_external.h
-  COMMAND
-    ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:_freeze_importlib>
-      ${SRC_DIR}/Lib/importlib/_bootstrap.py
       ${SRC_DIR}/Python/importlib.h
-  DEPENDS
-    _freeze_importlib
-    ${SRC_DIR}/Lib/importlib/_bootstrap_external.py
-    ${SRC_DIR}/Lib/importlib/_bootstrap.py
-)
+    )
+    add_custom_command(
+      OUTPUT ${LIBPYTHON_FROZEN_SOURCES}
+      COMMAND
+        ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:_freeze_importlib>
+          ${SRC_DIR}/Lib/importlib/_bootstrap_external.py
+          ${SRC_DIR}/Python/importlib_external.h
+      COMMAND
+        ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:_freeze_importlib>
+          ${SRC_DIR}/Lib/importlib/_bootstrap.py
+          ${SRC_DIR}/Python/importlib.h
+      DEPENDS
+        _freeze_importlib
+        ${SRC_DIR}/Lib/importlib/_bootstrap_external.py
+        ${SRC_DIR}/Lib/importlib/_bootstrap.py
+    )
+    
+    # This is a convenience target allowing to regenerate
+    # the frozen sources.
+    add_custom_target(freeze_modules DEPENDS ${LIBPYTHON_FROZEN_SOURCES})
 
-# This is a convenience target allowing to regenerate
-# the frozen sources.
-add_custom_target(freeze_modules DEPENDS ${LIBPYTHON_FROZEN_SOURCES})
-
+    endif()
 endif()
 
-# Build pgen executable
-set(PGEN2_SOURCES
-    ${SRC_DIR}/Parser/parsetok.c
-)
-set(PGEN3_SOURCES
-    ${SRC_DIR}/Python/dynamic_annotations.c
-    ${SRC_DIR}/Parser/parsetok_pgen.c
-)
-add_executable(pgen
-    ${PARSER_COMMON_SOURCES}
-    ${PGEN${PY_VERSION_MAJOR}_SOURCES}
-    ${SRC_DIR}/Objects/obmalloc.c
-    ${SRC_DIR}/Python/mysnprintf.c
-    ${SRC_DIR}/Python/pyctype.c
-    ${SRC_DIR}/Parser/tokenizer_pgen.c
-    ${SRC_DIR}/Parser/printgrammar.c
-    ${SRC_DIR}/Parser/pgenmain.c
-)
-if(builtin_compile_definitions_without_py_limited_api)
-  target_compile_definitions(pgen PUBLIC ${builtin_compile_definitions_without_py_limited_api})
+if(BUILD_PGEN)
+    # Build pgen executable
+    set(PGEN2_SOURCES
+        ${SRC_DIR}/Parser/parsetok.c
+    )
+    set(PGEN3_SOURCES
+        ${SRC_DIR}/Python/dynamic_annotations.c
+        ${SRC_DIR}/Parser/parsetok_pgen.c
+    )
+    add_executable(pgen
+        ${PARSER_COMMON_SOURCES}
+        ${PGEN${PY_VERSION_MAJOR}_SOURCES}
+        ${SRC_DIR}/Objects/obmalloc.c
+        ${SRC_DIR}/Python/mysnprintf.c
+        ${SRC_DIR}/Python/pyctype.c
+        ${SRC_DIR}/Parser/tokenizer_pgen.c
+        ${SRC_DIR}/Parser/printgrammar.c
+        ${SRC_DIR}/Parser/pgenmain.c
+    )
+    if(builtin_compile_definitions_without_py_limited_api)
+      target_compile_definitions(pgen PUBLIC ${builtin_compile_definitions_without_py_limited_api})
+    endif()
 endif()
 
 # Collect libpython sources
