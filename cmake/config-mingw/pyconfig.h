@@ -84,18 +84,24 @@ WIN32 is still required for the locale module.
 #endif
 
 /* set the version macros for the windows headers */
-#ifdef MS_WINX64
-/* 64 bit only runs on XP or greater */
-#  define Py_WINVER _WIN32_WINNT_WINXP
-#  define Py_NTDDI NTDDI_WINXP
+#if PY_VERSION_HEX >= 0x03050000
+/* Python 3.5+ requires Windows Vista or greater */
+#  define Py_WINVER 0x0600 /* _WIN32_WINNT_VISTA */
+#  define Py_NTDDI NTDDI_VISTA
 #else
-/* Python 2.6+ requires Windows 2000 or greater */
-#  ifdef _WIN32_WINNT_WIN2K
-#    define Py_WINVER _WIN32_WINNT_WIN2K
+#  ifdef MS_WINX64
+/* 64 bit only runs on XP or greater */
+#    define Py_WINVER _WIN32_WINNT_WINXP
+#    define Py_NTDDI NTDDI_WINXP
 #  else
-#    define Py_WINVER 0x0500
+/* Python 2.6+ requires Windows 2000 or greater */
+#    ifdef _WIN32_WINNT_WIN2K
+#      define Py_WINVER _WIN32_WINNT_WIN2K
+#    else
+#      define Py_WINVER 0x0500
+#    endif
+#    define Py_NTDDI NTDDI_WIN2KSP4
 #  endif
-#  define Py_NTDDI NTDDI_WIN2KSP4
 #endif
 
 /* We only set these values when building Python - we don't want to force
@@ -124,7 +130,9 @@ WIN32 is still required for the locale module.
 #define Py_IS_NAN _isnan
 #define Py_IS_INFINITY(X) (!_finite(X) && !_isnan(X))
 #define Py_IS_FINITE(X) _finite(X)
-#define copysign _copysign
+#if PY_VERSION_HEX < 0x03060000
+#  define copysign _copysign
+#endif
 
 #include <basetsd.h>
 
@@ -222,6 +230,8 @@ Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
 
 #endif /* MS_WIN32 */
 
+#if PY_VERSION_HEX < 0x03060000
+
 /* define signed and unsigned exact-width 32-bit and 64-bit types, used in the
    implementation of Python long integers. */
 #ifndef PY_UINT32_T
@@ -256,6 +266,8 @@ Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
 #define HAVE_INT64_T 1
 #define PY_INT64_T PY_LONG_LONG
 #endif
+#endif
+
 #endif
 
 /* Fairly standard from here! */
@@ -377,12 +389,16 @@ Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
 /* Define if you want to use the GNU readline library */
 /* #define WITH_READLINE 1 */
 
+#if PY_VERSION_HEX < 0x03060000
+
 /* Define if you want to have a Unicode type. */
 #define Py_USING_UNICODE
 
 /* Define as the size of the unicode type. */
 /* This is enough for unicodeobject.h to do the "right thing" on Windows. */
 #define Py_UNICODE_SIZE 2
+
+#endif
 
 /* Use Python's own small-block memory-allocator. */
 #define WITH_PYMALLOC 1
@@ -527,6 +543,11 @@ Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
 
 /* Define if the compiler provides a wchar.h header file. */
 #define HAVE_WCHAR_H 1
+
+#if PY_VERSION_HEX >= 0x03060000
+/* The size of `wchar_t', as computed by sizeof. */
+#define SIZEOF_WCHAR_T 2
+#endif
 
 /* Define if you have the dl library (-ldl).  */
 /* #undef HAVE_LIBDL */
