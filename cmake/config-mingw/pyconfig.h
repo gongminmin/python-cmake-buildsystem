@@ -584,4 +584,21 @@ Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
    least significant byte first */
 #define DOUBLE_IS_LITTLE_ENDIAN_IEEE754 1
 
+#if PY_VERSION_HEX >= 0x03070000
+/* Define to 1 if you have the `erf' function. */
+#define HAVE_ERF 1
+
+/* Define to 1 if you have the `erfc' function. */
+#define HAVE_ERFC 1
+
+/* Define if you have the 'inet_pton' function. */
+#define HAVE_INET_PTON 1
+
+/* framework name */
+#define _PYTHONFRAMEWORK ""
+
+/* Define if libssl has X509_VERIFY_PARAM_set1_host and related function */
+#define HAVE_X509_VERIFY_PARAM_SET1_HOST 1
+#endif
+
 #endif /* !Py_CONFIG_H */

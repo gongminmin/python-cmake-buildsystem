@@ -1501,6 +1501,11 @@
 /* Define if you have POSIX threads, and your system does not define that. */
 #cmakedefine _POSIX_THREADS
 
+#if PY_VERSION_HEX >= 0x03070000
+/* framework name */
+#define _PYTHONFRAMEWORK "@_PYTHONFRAMEWORK@"
+#endif
+
 /* Define to force use of thread-safe errno, h_errno, and other functions */
 #cmakedefine _REENTRANT 1
 
