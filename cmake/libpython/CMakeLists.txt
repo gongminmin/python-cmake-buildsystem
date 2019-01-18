@@ -103,6 +103,11 @@ if(MSVC)
         ${SRC_DIR}/PC/invalid_parameter_handler.c
     )
 endif()
+if(PY_VERSION VERSION_EQUAL "3.7" OR PY_VERSION VERSION_GREATER "3.7")
+    list(APPEND OBJECT3_SOURCES
+        ${SRC_DIR}/Objects/call.c
+    )
+endif()
 
 set(OBJECT_COMMON_SOURCES # Equivalent to OBJECT_OBJS in Makefile.pre
     ${OBJECT${PY_VERSION_MAJOR}_SOURCES}
@@ -206,6 +211,15 @@ set(PYTHON3_COMMON_SOURCES
     ${SRC_DIR}/Python/pystrtod.c
     ${SRC_DIR}/Python/pytime.c
 )
+if(PY_VERSION VERSION_EQUAL "3.7" OR PY_VERSION VERSION_GREATER "3.7")
+    list(APPEND PYTHON3_COMMON_SOURCES
+        ${SRC_DIR}/Python/ast_opt.c
+        ${SRC_DIR}/Python/ast_unparse.c
+        ${SRC_DIR}/Python/context.c
+        ${SRC_DIR}/Python/hamt.c
+        ${SRC_DIR}/Python/pathconfig.c
+    )
+endif()
 
 set(PYTHON_COMMON_SOURCES
     ${DYNLOAD_SOURCES}
@@ -243,13 +257,21 @@ set(PYTHON_COMMON_SOURCES
     ${SRC_DIR}/Python/pystrcmp.c
     ${SRC_DIR}/Python/Python-ast.c
     ${SRC_DIR}/Python/pythonrun.c
-    ${SRC_DIR}/Python/random.c
     ${SRC_DIR}/Python/structmember.c
     ${SRC_DIR}/Python/symtable.c
     ${SRC_DIR}/Python/sysmodule.c
     ${SRC_DIR}/Python/traceback.c
     ${SRC_DIR}/Python/_warnings.c
 )
+if(PY_VERSION VERSION_LESS "3.7")
+    list(APPEND PYTHON_COMMON_SOURCES
+        ${SRC_DIR}/Python/random.c
+    )
+else()
+    list(APPEND PYTHON_COMMON_SOURCES
+        ${SRC_DIR}/Python/bootstrap_hash.c
+    )
+endif()
 if(UNIX)
     list(APPEND PYTHON_COMMON_SOURCES
         ${SRC_DIR}/Python/frozenmain.c

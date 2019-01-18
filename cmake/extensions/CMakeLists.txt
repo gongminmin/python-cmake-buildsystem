@@ -144,6 +144,11 @@ if(PY_VERSION VERSION_EQUAL "3.6" OR PY_VERSION VERSION_GREATER "3.6")
     add_python_extension(_sha3 ${WIN32_BUILTIN} SOURCES _sha3/sha3module.c)
 endif()
 
+# Python 3.7
+if(PY_VERSION VERSION_EQUAL "3.7" OR PY_VERSION VERSION_GREATER "3.7")
+    add_python_extension(_abc BUILTIN REQUIRES IS_PY3 SOURCES _abc.c)
+endif()
+
 # UNIX-only extensions
 add_python_extension(fcntl REQUIRES UNIX SOURCES fcntlmodule.c)
 add_python_extension(grp REQUIRES UNIX SOURCES grpmodule.c)
