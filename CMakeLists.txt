@@ -404,6 +404,9 @@ endif()
 
 # Set include directories
 include_directories(${INCLUDE_BUILD_DIR})
+if(PY_VERSION VERSION_EQUAL "3.8" OR PY_VERSION VERSION_GREATER "3.8")
+    include_directories(${INCLUDE_BUILD_DIR}/internal)
+endif()
 include_directories(${PYCONFIG_BUILD_DIR})
 include_directories(${SRC_DIR}/Python)
 

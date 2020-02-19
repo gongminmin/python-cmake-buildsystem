@@ -27,7 +27,9 @@ extern PyObject* PyInit__sre(void);
 extern PyObject* PyInit__symtable(void);
 extern PyObject* PyInit__weakref(void);
 extern PyObject* PyInit_xxsubtype(void);
+#if PY_VERSION_HEX < 0x03080000
 extern PyObject* PyInit_zipimport(void);
+#endif
 
 struct _inittab _PyImport_Inittab[] = {
 
@@ -68,7 +70,9 @@ struct _inittab _PyImport_Inittab[] = {
     {"_symtable", PyInit__symtable},
     {"_weakref", PyInit__weakref},
     {"xxsubtype", PyInit_xxsubtype},
+#if PY_VERSION_HEX < 0x03080000
     {"zipimport", PyInit_zipimport},
+#endif
 
     /* Sentinel */
     {0, 0}

@@ -1,4 +1,7 @@
 add_definitions(-DPy_BUILD_CORE)
+if(PY_VERSION VERSION_EQUAL "3.8" OR PY_VERSION VERSION_GREATER "3.8")
+    add_definitions(-DPy_BUILD_CORE_BUILTIN)
+endif()
 add_definitions(-DNDEBUG)
 
 set(MODULE_SOURCES # Equivalent to MODULE_OBJS in Makefile.pre
@@ -67,16 +70,24 @@ endif()
 
 set(PARSER_COMMON_SOURCES # Equivalent to POBJS in Makefile.pre
     ${SRC_DIR}/Parser/acceler.c
-    ${SRC_DIR}/Parser/bitset.c
-    ${SRC_DIR}/Parser/firstsets.c
     ${SRC_DIR}/Parser/grammar1.c
-    ${SRC_DIR}/Parser/grammar.c
     ${SRC_DIR}/Parser/listnode.c
-    ${SRC_DIR}/Parser/metagrammar.c
     ${SRC_DIR}/Parser/node.c
     ${SRC_DIR}/Parser/parser.c
-    ${SRC_DIR}/Parser/pgen.c
 )
+if(PY_VERSION VERSION_LESS "3.8")
+    list(APPEND PARSER_COMMON_SOURCES
+        ${SRC_DIR}/Parser/bitset.c
+        ${SRC_DIR}/Parser/firstsets.c
+        ${SRC_DIR}/Parser/grammar.c
+        ${SRC_DIR}/Parser/metagrammar.c
+        ${SRC_DIR}/Parser/pgen.c
+    )
+else()
+    list(APPEND PARSER_COMMON_SOURCES
+        ${SRC_DIR}/Parser/token.c
+    )
+endif()
 
 set(OBJECT2_SOURCES
     ${SRC_DIR}/Objects/bufferobject.c
@@ -106,6 +117,12 @@ endif()
 if(PY_VERSION VERSION_EQUAL "3.7" OR PY_VERSION VERSION_GREATER "3.7")
     list(APPEND OBJECT3_SOURCES
         ${SRC_DIR}/Objects/call.c
+    )
+endif()
+if(PY_VERSION VERSION_EQUAL "3.8" OR PY_VERSION VERSION_GREATER "3.8")
+    list(APPEND OBJECT3_SOURCES
+        ${SRC_DIR}/Objects/interpreteridobject.c
+        ${SRC_DIR}/Objects/picklebufobject.c
     )
 endif()
 
@@ -220,6 +237,12 @@ if(PY_VERSION VERSION_EQUAL "3.7" OR PY_VERSION VERSION_GREATER "3.7")
         ${SRC_DIR}/Python/pathconfig.c
     )
 endif()
+if(PY_VERSION VERSION_EQUAL "3.7" OR PY_VERSION VERSION_GREATER "3.7")
+    list(APPEND PYTHON3_COMMON_SOURCES
+        ${SRC_DIR}/Python/initconfig.c
+        ${SRC_DIR}/Python/preconfig.c
+    )
+endif()
 
 set(PYTHON_COMMON_SOURCES
     ${DYNLOAD_SOURCES}
@@ -305,8 +328,12 @@ list(APPEND MODULE_SOURCES
     ${SRC_DIR}/Modules/symtablemodule.c
     ${SRC_DIR}/Modules/_weakref.c
     ${SRC_DIR}/Modules/xxsubtype.c
-    ${SRC_DIR}/Modules/zipimport.c
 )
+if(PY_VERSION VERSION_LESS "3.8")
+    list(APPEND MODULE_SOURCES
+        ${SRC_DIR}/Modules/zipimport.c
+    )
+endif()
 
 set(LIBPYTHON_OMIT_FROZEN_SOURCES
     ${SRC_DIR}/Modules/getbuildinfo.c

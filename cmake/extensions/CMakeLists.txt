@@ -129,9 +129,11 @@ add_python_extension(xxlimited REQUIRES IS_PY3 BUILD_TESTING
     NO_INSTALL
 )
 add_python_extension(xxsubtype BUILTIN REQUIRES IS_PY3 SOURCES xxsubtype.c)
-# The zipimport module is always imported at startup. Having it as a
-# builtin module avoids some bootstrapping problems and reduces overhead.
-add_python_extension(zipimport ALWAYS_BUILTIN REQUIRES IS_PY3 SOURCES zipimport.c)
+if(PY_VERSION VERSION_LESS "3.8")
+    # The zipimport module is always imported at startup. Having it as a
+    # builtin module avoids some bootstrapping problems and reduces overhead.
+    add_python_extension(zipimport ALWAYS_BUILTIN REQUIRES IS_PY3 SOURCES zipimport.c)
+endif()
 
 # Python 3.6
 if(PY_VERSION VERSION_EQUAL "3.6" OR PY_VERSION VERSION_GREATER "3.6")
